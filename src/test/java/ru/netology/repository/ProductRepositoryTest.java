@@ -12,31 +12,21 @@ public class ProductRepositoryTest {
     ProductRepository repository = new ProductRepository();
     ProductManager manager = new ProductManager(repository);
 
-    Product item1 = new Book(150, "Книга 1", 300,"Автор 1");
-    Product item2 = new Book(250, "Книга 2", 600, "Автор 2");
-    Product item3 = new Book(350, "Книга 3", 1_000, "Автор 3");
-    Product item4 = new Book(450, "Книга 4", 1_460, "Автор 4");
-    Product item5 = new Smartphone(550, "Телефон 1", 7_500, "Производитель 1");
-    Product item6 = new Smartphone(650, "Телефон 2", 10_700, "Производитель 2");
-    Product item7 = new Smartphone(750, "Телефон 3", 80_900, "Производитель 3");
-    Product item8 = new Smartphone(850, "Телефон 4", 100_000, "Производитель 4");
+    Product product = new Product(1, "Product rich model", 10_999);
+    Book book = new Book(2, "Book rich model", 89, "Author");
+    Smartphone smartphone = new Smartphone(3, "Smartphone rich model", 4_789, "Manufacturer");
 
     @BeforeEach
     public void setup() {
-        manager.add(item1);
-        manager.add(item2);
-        manager.add(item3);
-        manager.add(item4);
-        manager.add(item5);
-        manager.add(item6);
-        manager.add(item7);
-        manager.add(item8);
+        manager.add(product);
+        manager.add(book);
+        manager.add(smartphone);
     }
 
 
     @Test
     public void showSaveAll() {
-        Product[] expected = {item1, item2, item3, item4, item5, item6, item7, item8};
+        Product[] expected = {product, book, smartphone};
         Product[] actual = repository.findAll();
 
         Assertions.assertArrayEquals(expected, actual);
@@ -45,7 +35,7 @@ public class ProductRepositoryTest {
 
     @Test
     public void shouldSaveAllLength() {
-        int expected = 8;
+        int expected = 3;
         Product[] actual = repository.findAll();
         Assertions.assertEquals(expected, actual.length);
     }
@@ -60,9 +50,9 @@ public class ProductRepositoryTest {
 
     @Test
     public void shouldRemoveById() {
-        repository.removeBiId(item3.getId());
+        repository.removeBiId(book.getId());
 
-        Product[] expected = {item1, item2, item4, item5, item6, item7, item8};
+        Product[] expected = {product, smartphone};
         Product[] actual = repository.findAll();
 
         Assertions.assertArrayEquals(expected, actual);
@@ -73,7 +63,7 @@ public class ProductRepositoryTest {
     public void shouldFindAll() {
         repository.findAll();
 
-        Product[] expected = {item1, item2, item3, item4, item5,item6, item7, item8};
+        Product[] expected = {product, book, smartphone};
         Product[] actual = repository.findAll();
 
         Assertions.assertArrayEquals(expected, actual);
@@ -81,11 +71,25 @@ public class ProductRepositoryTest {
 
     @Test
     public void shouldFindBiUd() {
-        manager.findBiId(650);
+        manager.findBiId(2);
 
-        Product[] expected = {item1, item2, item3, item4, item5, item7, item8};
-        Product[] actual = {item1, item2, item3, item4, item5, item7, item8};
+        Product[] expected = {product, smartphone};
+        Product[] actual = {product, smartphone};
 
         Assertions.assertArrayEquals(expected, actual);
+    }
+
+    @Test
+    public void shouldMatchesProductBookSmartphone() {
+        Assertions.assertTrue(manager.matches(product, "rich model"));
+        Assertions.assertTrue(manager.matches(book, "rich model"));
+        Assertions.assertTrue(manager.matches(smartphone, "rich model"));
+    }
+
+    @Test
+    public void shouldMatchesFalseProductBookSmartphone() {
+        Assertions.assertFalse(manager.matches(product, "1"));
+        Assertions.assertFalse(manager.matches(book, "2"));
+        Assertions.assertFalse(manager.matches(smartphone, "3"));
     }
 }
