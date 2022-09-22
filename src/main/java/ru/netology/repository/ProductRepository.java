@@ -1,6 +1,7 @@
 package ru.netology.repository;
 
 import ru.netology.domain.Product;
+import ru.netology.exception.AlreadyExistsException;
 import ru.netology.exception.NotFoundException;
 
 public class ProductRepository {
@@ -10,6 +11,10 @@ public class ProductRepository {
 
     //Сохранение продуктов
     public void save(Product item) {
+        if (findBiId(item.getId()) != null) {
+            throw new AlreadyExistsException(
+                    "Element with id: " + item.getId() + " repeats");
+        }
         Product[] tmp = new Product[items.length + 1];
         for (int i = 0; i < items.length; i++) {
             tmp[i] = items[i];
@@ -28,7 +33,7 @@ public class ProductRepository {
     public Product[] removeBiId(int id) {
         if (findBiId(id) == null) {
             throw new NotFoundException(
-            "Element with id: " + id + " not found");
+                    "Element with id: " + id + " not found");
         }
         Product[] tmp = new Product[items.length - 1];
         int copyToIndex = 0;

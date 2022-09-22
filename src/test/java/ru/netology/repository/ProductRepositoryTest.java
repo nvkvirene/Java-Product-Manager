@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 import ru.netology.domain.Product;
 import ru.netology.domain.Book;
 import ru.netology.domain.Smartphone;
+import ru.netology.exception.AlreadyExistsException;
 import ru.netology.exception.NotFoundException;
 import ru.netology.manager.ProductManager;
 
@@ -13,7 +14,7 @@ public class ProductRepositoryTest {
     ProductRepository repository = new ProductRepository();
     ProductManager manager = new ProductManager(repository);
 
-    Product item1 = new Book(150, "Книга 1", 300,"Автор 1");
+    Product item1 = new Book(150, "Книга 1", 300, "Автор 1");
     Product item2 = new Book(250, "Книга 2", 600, "Автор 2");
     Product item3 = new Book(350, "Книга 3", 1_000, "Автор 3");
     Product item4 = new Book(450, "Книга 4", 1_460, "Автор 4");
@@ -74,7 +75,7 @@ public class ProductRepositoryTest {
     public void shouldFindAll() {
         repository.findAll();
 
-        Product[] expected = {item1, item2, item3, item4, item5,item6, item7, item8};
+        Product[] expected = {item1, item2, item3, item4, item5, item6, item7, item8};
         Product[] actual = repository.findAll();
 
         Assertions.assertArrayEquals(expected, actual);
@@ -102,9 +103,24 @@ public class ProductRepositoryTest {
     public void shouldDeletingAnExistingElement() {
         repository.removeBiId(650);
 
-        Product[] expected = new Product[] {item1, item2, item3, item4, item5, item7, item8};
+        Product[] expected = new Product[]{item1, item2, item3, item4, item5, item7, item8};
         Product[] actual = repository.findAll();
 
         Assertions.assertArrayEquals(expected, actual);
+    }
+
+    @Test
+    public void shouldGenerationAlreadyExistsException() {
+
+        Assertions.assertThrows(AlreadyExistsException.class, () -> {
+            repository.save(item8);
+        });
+    }
+
+    @Test
+    public void shouldAddingAnElement() {
+        repository.save(new Smartphone(950, "Smartphone 5", 90_555, "Manufacturer 5"));
+        int expected = 950;
+        Product[] actual = repository.findAll();
     }
 }
