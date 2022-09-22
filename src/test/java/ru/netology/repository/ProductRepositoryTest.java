@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 import ru.netology.domain.Product;
 import ru.netology.domain.Book;
 import ru.netology.domain.Smartphone;
+import ru.netology.exception.NotFoundException;
 import ru.netology.manager.ProductManager;
 
 public class ProductRepositoryTest {
@@ -85,6 +86,24 @@ public class ProductRepositoryTest {
 
         Product[] expected = {item1, item2, item3, item4, item5, item7, item8};
         Product[] actual = {item1, item2, item3, item4, item5, item7, item8};
+
+        Assertions.assertArrayEquals(expected, actual);
+    }
+
+    @Test
+    public void shouldGenerationNotFoundException() {
+
+        Assertions.assertThrows(NotFoundException.class, () -> {
+            repository.removeBiId(-100);
+        });
+    }
+
+    @Test
+    public void shouldDeletingAnExistingElement() {
+        repository.removeBiId(650);
+
+        Product[] expected = new Product[] {item1, item2, item3, item4, item5, item7, item8};
+        Product[] actual = repository.findAll();
 
         Assertions.assertArrayEquals(expected, actual);
     }
